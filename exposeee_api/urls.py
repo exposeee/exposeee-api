@@ -14,9 +14,10 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import re_path
-from core.views import ExposeUploadView
+from django.urls import re_path, path
+from core.views import ExposeUploadView, ExportView
 
 urlpatterns = [
     re_path(r'^api/v1/expose/(?P<filename>[^/]+)$', ExposeUploadView.as_view()),
+    path('api/v1/export/', ExportView.as_view()),
 ]
