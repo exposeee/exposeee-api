@@ -1,7 +1,5 @@
-from rest_framework.test import APITestCase
-from rest_framework.test import APIClient
-from core.views import ExportView
 import json
+from rest_framework.test import APITestCase
 
 
 class SpreadsheetTestCase(APITestCase):

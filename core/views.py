@@ -1,26 +1,24 @@
-from django.shortcuts import render
+import traceback
+import tempfile
+import base64
+import time
+
 from rest_framework import status
-from django.http import FileResponse
 from rest_framework.parsers import FileUploadParser
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from pdfminer.pdfpage import PDFPage
-import io
 from memba_match.kpi_from_text import kpi_on_file
 from memba_match.text_parser import read_file, filter_elements_from_page
 
-import traceback
-import datetime
-
-import time
 import pandas as pd
 from openpyxl import Workbook
 from openpyxl.utils.dataframe import dataframe_to_rows
-from tempfile import NamedTemporaryFile
 
-def format_columns(column, format='#,##0.00'):
+
+def format_columns(column, code_pattern='#,##0.00'):
     for _cell in column:
-        _cell.number_format = format
+        _cell.number_format = code_pattern
+
 
 def dict_to_excel(data):
     data_frame = pd.DataFrame(data)
@@ -41,13 +39,15 @@ def dict_to_excel(data):
 
     return workbook
 
+
 def file_name(token):
     return f'exposeee_{token}_{time.strftime("%Y-%m-%d_%I-%M-%S_%p")}.xlsx'
+
 
 class ExposeUploadView(APIView):
     parser_classes = (FileUploadParser,)
 
-    def post(self, request, filename, format=None):
+    def post(self, request, filename):
         file_obj = request.data['file']
         try:
             pages = []
@@ -65,33 +65,37 @@ class ExposeUploadView(APIView):
             )
 
         response = Response(
-                data=result,
+            data=result,
         )
 
         return response
 
+
 class ExportView(APIView):
 
-    def post(self, request, *args, **kwargs):
-        token = request.data['token']
-        data = request.data['data']
+    def post(self, request):
+        try:
+            token = request.data['token']
+            data = request.data['data']
 
-        filename = file_name(token)
-        workbook = dict_to_excel(data)
-        workbook.save(filename)
+            filename = file_name(token)
+            workbook = dict_to_excel(data)
+            with tempfile.TemporaryFile() as output:
+                workbook.save(output)
+                output.seek(0)
+                base64_encode = base64.b64encode(output.read())
 
-        import base64
-        response = Response(
-            {
-                'content': base64.b64encode(open(filename, 'rb').read()),
-                'filename': filename
-            }
-        )
+            response = Response(
+                {
+                    'content': base64_encode,
+                    'filename': filename
+                }
+            )
 
-        import os
-        if os.path.exists(filename):
-          os.remove(filename)
-        else:
-          print(f'The file {filename} does not exist')
+        except Exception:
+            return Response(
+                traceback.format_exc(),
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
 
         return response
