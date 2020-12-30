@@ -6,4 +6,4 @@ pandas==1.0.4
 openpyxl==3.0.3
 
 
-git+ssh://git@github.com/exposeee/memba_match.git@v0.0.10
+git+ssh://git@github.com/exposeee/memba_match.git@v0.0.12
