@@ -7,8 +7,10 @@ from rest_framework import status
 from rest_framework.parsers import FileUploadParser
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from memba_match.kpi_from_text import kpi_on_file
-from memba_match.text_parser import read_file, filter_elements_from_page
+from memba_match.kpi_from_text import extract_kpi
+from memba_match.text_handler import TextHandler
+from memba_match.image_handler import ImageHandler
+from pdfminer.pdfparser import PDFSyntaxError
 
 import pandas as pd
 from openpyxl import Workbook
@@ -43,17 +45,27 @@ def dict_to_excel(data):
 def file_name(token):
     return f'exposeee_{token}_{time.strftime("%Y-%m-%d_%I-%M-%S_%p")}.xlsx'
 
-
 class ExposeUploadView(APIView):
     parser_classes = (FileUploadParser,)
 
     def post(self, request, filename):
         file_obj = request.data['file']
         try:
-            pages = []
-            for page in read_file(file_obj):
-                pages.append(filter_elements_from_page(page))
-            result = kpi_on_file(pages, filename)
+            try:
+                textHandler = TextHandler(path='', file_io=file_obj)
+                textHandler.filename = filename
+                result = extract_kpi(textHandler)
+            except PDFSyntaxError:
+                result = {}
+
+            result_values = [item for item in result.values() if item != '']
+
+            if len(result_values) < 4:
+                file_obj.seek(0)
+                imageHandler = ImageHandler(path='', file_io=file_obj.read())
+                imageHandler.filename = filename
+                result = extract_kpi(imageHandler)
+
             for key, value in result.items():
                 if value == '':
                     result[key] = None
