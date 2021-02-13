@@ -13,6 +13,7 @@ import os
 from pathlib import Path
 from decouple import config
 from dj_database_url import parse as dburl
+from corsheaders.defaults import default_headers
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -52,6 +53,8 @@ INSTALLED_APPS = [
     'allauth.account',
     'allauth.socialaccount',
     'dj_rest_auth.registration',
+    'storages',
+    'django_s3_storage',
 ]
 
 SITE_ID = 1
@@ -165,13 +168,21 @@ ACCOUNT_EMAIL_VERIFICATION = 'mandatory'
 
 ACCOUNT_EMAIL_SUBJECT_PREFIX = 'MembaXMatch - '
 
+ACCOUNT_SESSION_REMEMBER = True
+
 CORS_ALLOWED_ORIGINS = config(
     'CORS_ALLOWED_ORIGINS',
     cast=lambda v: [s.strip() for s in v.split(',')]
 )
 
+CORS_ALLOW_HEADERS = list(default_headers) + [
+    'content-disposition',
+    'Access-Control-Allow-Credentials',
+]
+
+CORS_ALLOW_CREDENTIALS = True
+
 #Email
-SENDGRID_API_KEY=config('SENDGRID_API_KEY')
 EMAIL_BACKEND=config('EMAIL_BACKEND')
 EMAIL_HOST=config('EMAIL_HOST')
 EMAIL_PORT=config('EMAIL_PORT')
@@ -179,3 +190,28 @@ EMAIL_USE_TLS=config('EMAIL_USE_TLS')
 EMAIL_HOST_USER=config('EMAIL_HOST_USER')
 EMAIL_HOST_PASSWORD=config('EMAIL_HOST_PASSWORD')
 DEFAULT_FROM_EMAIL=config('EMAIL_HOST_USER')
+
+
+DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+
+# The AWS region to connect to.
+AWS_REGION = "fra1"
+
+# The AWS access key to use.
+AWS_ACCESS_KEY_ID = 'H75QAUJSLEUEUJN5R466'
+# The AWS secret access key to use.
+AWS_SECRET_ACCESS_KEY = 'yCyTly8EZov7QhOxPgskoKL0vJToPi1YAzlJ9C9gZlg'
+AWS_STORAGE_BUCKET_NAME = 'memba'
+
+# The full URL to the S3 endpoint. Leave blank to use the default region URL.
+AWS_S3_ENDPOINT_URL = 'https://fra1.digitaloceanspaces.com'
+
+AWS_S3_OBJECT_PARAMETERS = {
+    'CacheControl': 'max-age=86400',
+}
+
+AWS_LOCATION = 'static'
+
+# s3 static settings
+STATIC_URL = 'https://%s/%s/' % (AWS_S3_ENDPOINT_URL, AWS_LOCATION)
+STATICFILES_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
