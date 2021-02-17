@@ -1,5 +1,6 @@
 -r requirements.txt
 
 pytest==5.4.3
+pytest-django==4.1.0
 pylint==2.5.2
 flake8==3.8.3

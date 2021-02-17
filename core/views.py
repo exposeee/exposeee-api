@@ -1,7 +1,6 @@
 import traceback
 import tempfile
 import base64
-import time
 
 from rest_framework import status
 from rest_framework.parsers import FileUploadParser
@@ -12,48 +11,18 @@ from memba_match.text_handler import TextHandler
 from memba_match.image_handler import ImageHandler
 from pdfminer.pdfparser import PDFSyntaxError
 
-import pandas as pd
-from openpyxl import Workbook
-from openpyxl.utils.dataframe import dataframe_to_rows
+from .utils import format_columns, dict_to_excel, file_name
 
-
-def format_columns(column, code_pattern='#,##0.00'):
-    for _cell in column:
-        _cell.number_format = code_pattern
-
-
-def dict_to_excel(data):
-    data_frame = pd.DataFrame(data)
-    workbook = Workbook()
-    workbook_actived = workbook.active
-
-    for row in dataframe_to_rows(data_frame, index=False):
-        workbook_actived.append(row)
-
-    format_columns(workbook_actived['A'])
-    format_columns(workbook_actived['B'])
-    format_columns(workbook_actived['D'])
-    format_columns(workbook_actived['E'])
-    format_columns(workbook_actived['H'])
-    format_columns(workbook_actived['I'])
-    format_columns(workbook_actived['J'])
-    format_columns(workbook_actived['K'])
-
-    return workbook
-
-
-def file_name(token):
-    return f'exposeee_{token}_{time.strftime("%Y-%m-%d_%I-%M-%S_%p")}.xlsx'
 
 class ExposeUploadView(APIView):
     parser_classes = (FileUploadParser,)
 
-    def post(self, request, filename):
+    def post(self, request):
         file_obj = request.data['file']
         try:
             try:
                 textHandler = TextHandler(path='', file_io=file_obj)
-                textHandler.filename = filename
+                textHandler.filename = file_obj.name
                 result = extract_kpi(textHandler)
             except PDFSyntaxError:
                 result = {}
@@ -63,7 +32,7 @@ class ExposeUploadView(APIView):
             if len(result_values) < 4:
                 file_obj.seek(0)
                 imageHandler = ImageHandler(path='', file_io=file_obj.read())
-                imageHandler.filename = filename
+                imageHandler.filename = file_obj.name
                 result = extract_kpi(imageHandler)
 
             for key, value in result.items():
@@ -105,7 +74,7 @@ class ExportView(APIView):
             )
 
         except Exception:
-            return Response(
+            response = Response(
                 traceback.format_exc(),
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
             )

@@ -1,0 +1,25 @@
+{% load account %}
+{% load i18n %}
+
+{% block content %}
+{% autoescape off %}
+{% user_display user as user_display %}
+{% blocktrans with site_name=current_site.name site_domain=current_site.domain %}
+Hey {{ user_display }},
+
+you’re almost ready to start enjoying our platform.
+Please confirm your registration by clicking the link below.
+
+{{ current_site }}/account_confirm_email?key={{ key }}
+
+If you have received this mail by mistake, simply delete it.
+
+Thank you,
+Benjamin from membaXmatch
+
+For questions about membaXmatch, please contact:
+hello@memba.realestate
+
+{% endblocktrans %}
+{% endautoescape %}
+{% endblock %}

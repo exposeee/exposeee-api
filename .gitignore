@@ -15,3 +15,7 @@ __pycache__/
 
 .env
 .python-version
+
+*.pdf
+
+**/*.DS_Store
