@@ -168,6 +168,8 @@ ACCOUNT_EMAIL_VERIFICATION = 'mandatory'
 
 ACCOUNT_EMAIL_SUBJECT_PREFIX = 'MembaXMatch - '
 
+ACCOUNT_ADAPTER = 'core.adapter.CustomAccountAdapter'
+
 ACCOUNT_SESSION_REMEMBER = True
 
 CORS_ALLOWED_ORIGINS = config(
@@ -198,9 +200,9 @@ DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
 AWS_REGION = "fra1"
 
 # The AWS access key to use.
-AWS_ACCESS_KEY_ID = 'H75QAUJSLEUEUJN5R466'
+AWS_ACCESS_KEY_ID = config('AWS_ACCESS_KEY_ID')
 # The AWS secret access key to use.
-AWS_SECRET_ACCESS_KEY = 'yCyTly8EZov7QhOxPgskoKL0vJToPi1YAzlJ9C9gZlg'
+AWS_SECRET_ACCESS_KEY = config('AWS_SECRET_ACCESS_KEY')
 AWS_STORAGE_BUCKET_NAME = 'memba'
 
 # The full URL to the S3 endpoint. Leave blank to use the default region URL.

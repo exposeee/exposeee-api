@@ -10,15 +10,13 @@ Hey {{ user_display }},
 you’re almost ready to start enjoying our platform.
 Please confirm your registration by clicking the link below.
 
-http://localhost:3000/account_confirm_email?key={{ key }}
+{{ current_site }}/account_confirm_email?key={{ key }}
 
 If you have received this mail by mistake, simply delete it.
 
 Thank you,
 Benjamin from membaXmatch
 
-If you have any trouble clicking the password reset button, copy and paste the URl below into your web browser.
---insert url----
 For questions about membaXmatch, please contact:
 hello@memba.realestate
 

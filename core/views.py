@@ -12,7 +12,6 @@ from memba_match.image_handler import ImageHandler
 from pdfminer.pdfparser import PDFSyntaxError
 
 from .utils import format_columns, dict_to_excel, file_name
-import pdb
 
 
 class ExposeUploadView(APIView):
