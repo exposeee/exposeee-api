@@ -2,19 +2,26 @@ import traceback
 import tempfile
 import base64
 
-from rest_framework import status
+from rest_framework import status, permissions
+from rest_framework.authentication import SessionAuthentication, BasicAuthentication
 from rest_framework.parsers import FileUploadParser
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from rest_framework_simplejwt.tokens import RefreshToken
+
 from memba_match.kpi_from_text import extract_kpi
 from memba_match.text_handler import TextHandler
 from memba_match.image_handler import ImageHandler
 from pdfminer.pdfparser import PDFSyntaxError
 
+from rest_framework_simplejwt.exceptions import TokenError
+
 from .utils import format_columns, dict_to_excel, file_name
 
 
 class ExposeUploadView(APIView):
+    authentication_classes = ()
+    permission_classes = (permissions.AllowAny,)
     parser_classes = (FileUploadParser,)
 
     def post(self, request):
@@ -53,6 +60,8 @@ class ExposeUploadView(APIView):
 
 
 class ExportView(APIView):
+    authentication_classes = ()
+    permission_classes = (permissions.AllowAny,)
 
     def post(self, request):
         try:
@@ -80,3 +89,19 @@ class ExportView(APIView):
             )
 
         return response
+
+
+class LogoutAndBlacklistRefreshTokenForUserView(APIView):
+    authentication_classes = ()
+    permission_classes = (permissions.AllowAny,)
+
+    def post(self, request):
+        try:
+            refresh_token = request.data["refresh_token"]
+            token = RefreshToken(refresh_token)
+            token.blacklist()
+            return Response(status=status.HTTP_205_RESET_CONTENT)
+        except TokenError:
+            return Response(status=status.HTTP_205_RESET_CONTENT)
+        except Exception as e:
+            return Response(status=status.HTTP_400_BAD_REQUEST)

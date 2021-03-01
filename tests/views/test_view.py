@@ -11,13 +11,14 @@ def login(client, user):
         'password': 'user123',
     }
 
-    client.post('/memba-auth/login/', payload, status_code=200)
+    return client.post('/memba-auth/login/', payload, status_code=200)
 
 @pytest.mark.django_db
 def xtest_upload_pdf(client, user):
-    login(client, user)
+    login_resp = login(client, user)
 
     header={
+        'HTTP_AUTHORIZATIO': f'Bearer {login_resp.access}',
         'HTTP_CONTENT_DISPOSITION': 'attachment; filename=test.pdf',
         'HTTP_CONTENT_TYPE': (
             'multipart/form-data; '
@@ -60,15 +61,23 @@ def xtest_upload_pdf(client, user):
 
 @pytest.mark.django_db
 def test_list_exposes(client, user, expose_user_list):
-    login(client, user)
+    login_resp = login(client, user)
 
-    resp = client.get(reverse('v2_expose_list'))
+    header={
+        'HTTP_AUTHORIZATION': f'Bearer {login_resp.data["access_token"]}',
+    }
+
+    resp = client.get(reverse('v2_expose_list'), **header)
     assert [{'id': 1}, {'id': 2}] == resp.data
 
 
 @pytest.mark.django_db
 def test_save_browser_storage(client, user):
-    login(client, user)
+    login_resp = login(client, user)
+
+    header={
+        'HTTP_AUTHORIZATION': f'Bearer {login_resp.data["access_token"]}',
+    }
 
     payload_data = {'exposes': [
       {'kaufpreis': 2000000, 'area': 300000},
@@ -84,6 +93,7 @@ def test_save_browser_storage(client, user):
         reverse('v2_expose_save_browser_storage'),
         payload_data,
         content_type='application/json',
+        **header,
     )
 
     assert expected == resp.data
@@ -93,12 +103,17 @@ def test_save_browser_storage(client, user):
 
 @pytest.mark.django_db
 def test_export_file(client, user, expose_user_list_kpis):
-    login(client, user)
+    login_resp = login(client, user)
+
+    header={
+        'HTTP_AUTHORIZATION': f'Bearer {login_resp.data["access_token"]}',
+    }
 
     response = client.post(
         reverse('v2_expose_export'),
         {'token': '1234'},
         content_type='application/json',
+        **header,
     )
 
     assert 'exposeee_1234_' in response.data['filename']
@@ -106,12 +121,17 @@ def test_export_file(client, user, expose_user_list_kpis):
 
 @pytest.mark.django_db
 def test_delete_exposes(client, user, expose_user_list_kpis):
-    login(client, user)
+    login_resp = login(client, user)
+
+    header={
+        'HTTP_AUTHORIZATION': f'Bearer {login_resp.data["access_token"]}',
+    }
 
     response = client.delete(
         reverse('v2_expose_delete'),
         {'ids': [1, 2]},
         content_type='application/json',
+        **header,
     )
 
     assert response.data == (2, {'core.Expose': 2})

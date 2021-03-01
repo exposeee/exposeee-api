@@ -15,12 +15,19 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import re_path, path, include
-from core.views import ExposeUploadView, ExportView
+from core.views import (
+    ExposeUploadView, ExportView,
+    LogoutAndBlacklistRefreshTokenForUserView,
+)
 from core.api import (
     ExposeUploadFileView, ExposeListView,
     ExposeBrowserStorageView, ExportExposesView, DeleteExposesView,
 )
 from rest_framework_simplejwt import views as jwt_views
+from rest_framework_simplejwt.views import (
+    TokenObtainPairView,
+    TokenRefreshView,
+)
 from dj_rest_auth.registration.views import VerifyEmailView
 
 urlpatterns = [
@@ -29,6 +36,11 @@ urlpatterns = [
     path('accounts/', include('allauth.urls')),
     path('api/v1/expose/', ExposeUploadView.as_view(), name='v1-expose'),
     path('api/v1/export/', ExportView.as_view(), name='v1-expose-export'),
+    path(
+        'api/v1/blacklist/',
+        LogoutAndBlacklistRefreshTokenForUserView.as_view(),
+        name='blacklist'
+    ),
     path(
         r'api/v2/expose/upload_file/',
         ExposeUploadFileView.as_view(),
@@ -53,6 +65,16 @@ urlpatterns = [
         r'api/v2/expose/delete/',
         DeleteExposesView.as_view(),
         name='v2_expose_delete',
+    ),
+    path(
+        'api/v2/token/',
+        TokenObtainPairView.as_view(),
+        name='token_obtain_pair'
+    ),
+    path(
+        'api/v2/token/refresh/',
+        TokenRefreshView.as_view(),
+        name='token_refresh'
     ),
     path('api/token/', jwt_views.TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('api/token/refresh/', jwt_views.TokenRefreshView.as_view(), name='token_refresh'),

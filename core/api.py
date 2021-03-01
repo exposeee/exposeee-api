@@ -11,7 +11,7 @@ from memba_match.kpi_from_text import extract_kpi
 from memba_match.text_handler import TextHandler
 from memba_match.image_handler import ImageHandler
 from pdfminer.pdfparser import PDFSyntaxError
-from dj_rest_auth.jwt_auth import JWTCookieAuthentication
+from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework.permissions import IsAuthenticated
 
 from .utils import format_columns, dict_to_excel, file_name
@@ -20,7 +20,7 @@ from .models import Expose, ExposeUser
 
 
 class ExposeListView(APIView):
-    authentication_classes = [JWTCookieAuthentication]
+    authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
@@ -31,7 +31,7 @@ class ExposeListView(APIView):
 
 class ExposeUploadFileView(APIView):
     parser_classes = (FileUploadParser,)
-    authentication_classes = [JWTCookieAuthentication]
+    authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
 
     def post(self, request):
@@ -78,7 +78,8 @@ class ExposeUploadFileView(APIView):
 
 
 class ExposeBrowserStorageView(APIView):
-    authentication_classes = [JWTCookieAuthentication]
+    # authentication_classes = [JWTCookieAuthentication]
+    authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
 
     def post(self, request):
@@ -102,7 +103,7 @@ class ExposeBrowserStorageView(APIView):
 
 
 class ExportExposesView(APIView):
-    authentication_classes = [JWTCookieAuthentication]
+    authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
 
     def post(self, request):
@@ -134,7 +135,7 @@ class ExportExposesView(APIView):
         return response
 
 class DeleteExposesView(APIView):
-    authentication_classes = [JWTCookieAuthentication]
+    authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
 
     def delete(self, request):
