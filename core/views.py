@@ -3,20 +3,17 @@ import tempfile
 import base64
 
 from rest_framework import status, permissions
-from rest_framework.authentication import SessionAuthentication, BasicAuthentication
 from rest_framework.parsers import FileUploadParser
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
 
-from memba_match.kpi_from_text import extract_kpi
-from memba_match.text_handler import TextHandler
-from memba_match.image_handler import ImageHandler
-from pdfminer.pdfparser import PDFSyntaxError
+from memba_match.entities import Entities
+from memba_match.utils import dict_to_excel
 
 from rest_framework_simplejwt.exceptions import TokenError
 
-from .utils import format_columns, dict_to_excel, file_name
+from .utils import file_name
 
 
 class ExposeUploadView(APIView):
@@ -27,34 +24,15 @@ class ExposeUploadView(APIView):
     def post(self, request):
         file_obj = request.data['file']
         try:
-            try:
-                textHandler = TextHandler(path='', file_io=file_obj)
-                textHandler.filename = file_obj.name
-                result = extract_kpi(textHandler)
-            except PDFSyntaxError:
-                result = {}
-
-            result_values = [item for item in result.values() if item != '']
-
-            if len(result_values) < 4:
-                file_obj.seek(0)
-                imageHandler = ImageHandler(path='', file_io=file_obj.read())
-                imageHandler.filename = file_obj.name
-                result = extract_kpi(imageHandler)
-
-            for key, value in result.items():
-                if value == '':
-                    result[key] = None
-
+            entities = Entities(file_io=file_obj)
+            response = Response(
+                data=entities.payload,
+            )
         except Exception:
-            return Response(
+            response = Response(
                 traceback.format_exc(),
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
-
-        response = Response(
-            data=result,
-        )
 
         return response
 

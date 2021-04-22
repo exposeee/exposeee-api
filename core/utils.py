@@ -4,6 +4,7 @@ import pandas as pd
 from openpyxl import Workbook
 from openpyxl.utils.dataframe import dataframe_to_rows
 
+
 def format_columns(column, code_pattern='#,##0.00'):
     for _cell in column:
         _cell.number_format = code_pattern
