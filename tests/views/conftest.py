@@ -43,7 +43,22 @@ def expose_user_list_kpis(user):
         file="file1.pdf",
         status=Expose.DONE,
         data={
-            'kpis': {'kaufpreis': 2000000, 'area': 300000}
+            'kpis': {
+                'kaufpreis': 2000000,
+                'area': 300000,
+                'yield': None,
+                'multiplier': None,
+                'wohneinheiten': None,
+                'gewerbeflaeche': None,
+                'price_m2': None,
+                'date': None,
+                'address': None,
+                'gewerbeeinheiten': None,
+                'baujahr': None,
+                'resource': None,
+                'wohnflaeche': None,
+                'jnkm': None,
+            }
         },
     )
 
@@ -51,7 +66,22 @@ def expose_user_list_kpis(user):
         file="file2.pdf",
         status=Expose.DONE,
         data={
-            'kpis': {'kaufpreis': 5000000, 'area': 700000}
+            'kpis': {
+                'kaufpreis': 5000000,
+                'area': 700000,
+                'yield': None,
+                'multiplier': None,
+                'wohneinheiten': None,
+                'gewerbeflaeche': None,
+                'price_m2': None,
+                'date': None,
+                'address': None,
+                'gewerbeeinheiten': None,
+                'baujahr': None,
+                'resource': None,
+                'wohnflaeche': None,
+                'jnkm': None,
+            }
         },
     )
 

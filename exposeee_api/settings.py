@@ -57,6 +57,7 @@ INSTALLED_APPS = [
     'storages',
     'django_s3_storage',
     'rest_framework_simplejwt.token_blacklist',
+    'test_without_migrations',
 ]
 
 SITE_ID = 1

@@ -1,20 +1,17 @@
 import traceback
 import tempfile
 import base64
-import json
 
 from rest_framework import status
 from rest_framework.parsers import FileUploadParser
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from memba_match.kpi_from_text import extract_kpi
-from memba_match.text_handler import TextHandler
-from memba_match.image_handler import ImageHandler
-from pdfminer.pdfparser import PDFSyntaxError
+from memba_match.entities import Entities
+from memba_match.utils import dict_to_excel
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework.permissions import IsAuthenticated
 
-from .utils import format_columns, dict_to_excel, file_name
+from .utils import file_name
 
 from .models import Expose, ExposeUser
 
@@ -39,28 +36,10 @@ class ExposeUploadFileView(APIView):
 
         expose = Expose(file=file_obj)
         try:
-            try:
-                textHandler = TextHandler(path='', file_io=file_obj)
-                textHandler.filename = file_obj.name
-                result = extract_kpi(textHandler)
-                expose.data['text'] = textHandler.full_text()
-            except PDFSyntaxError:
-                result = {}
+            entities = Entities(file_io=file_obj)
 
-            result_values = [item for item in result.values() if item != '']
-
-            if len(result_values) < 4:
-                file_obj.seek(0)
-                imageHandler = ImageHandler(path='', file_io=file_obj.read())
-                imageHandler.filename = file_obj.name
-                result = extract_kpi(imageHandler)
-                expose.data['text'] = imageHandler.full_text()
-
-            for key, value in result.items():
-                if value == '':
-                    result[key] = None
-
-            expose.data['kpis'] = result
+            expose.data['kpis'] = entities.payload
+            expose.data['text'] = entities.handler.full_text()
             expose.status = Expose.DONE
             expose.data['logs'] = ''
 
@@ -78,7 +57,6 @@ class ExposeUploadFileView(APIView):
 
 
 class ExposeBrowserStorageView(APIView):
-    # authentication_classes = [JWTCookieAuthentication]
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
 
@@ -112,7 +90,7 @@ class ExportExposesView(APIView):
             data = ExposeUser.list_kpis_by_user(request.user)
 
             filename = file_name(token)
-            workbook = dict_to_excel([ item['kpis'] for item in data])
+            workbook = dict_to_excel([item['kpis'] for item in data])
             with tempfile.TemporaryFile() as output:
                 workbook.save(output)
                 output.seek(0)
@@ -133,6 +111,7 @@ class ExportExposesView(APIView):
             )
 
         return response
+
 
 class DeleteExposesView(APIView):
     authentication_classes = [JWTAuthentication]
