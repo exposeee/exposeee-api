@@ -10,7 +10,10 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.1/ref/settings/
 """
 import os
+import sentry_sdk
+
 from datetime import timedelta
+from sentry_sdk.integrations.django import DjangoIntegration
 from pathlib import Path
 from decouple import config
 from dj_database_url import parse as dburl
@@ -74,6 +77,7 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'exposeee_api.urls'
+
 
 TEMPLATES = [
     {
@@ -233,3 +237,15 @@ AWS_LOCATION = 'static'
 # s3 static settings
 STATIC_URL = 'https://%s/%s/' % (AWS_S3_ENDPOINT_URL, AWS_LOCATION)
 STATICFILES_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+
+
+# Sentry
+
+SENTRY_DSN = config('SENTRY_DSN')
+
+sentry_sdk.init(
+    SENTRY_DSN,
+    integrations=[DjangoIntegration()],
+    traces_sample_rate=0.8,
+    send_default_pii=True
+)
