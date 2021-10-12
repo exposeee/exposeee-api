@@ -8,7 +8,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
 
-from memba_match.entities import Entities
+from memba_match.entity_handler import EntityHandler
 from memba_match.utils import dict_to_excel
 
 from rest_framework_simplejwt.exceptions import TokenError
@@ -24,7 +24,7 @@ class ExposeUploadView(APIView):
     def post(self, request):
         file_obj = request.data['file']
         try:
-            entities = Entities(file_io=file_obj)
+            entities = EntityHandler(file_io=file_obj)
             response = Response(
                 data=entities.payload,
             )
