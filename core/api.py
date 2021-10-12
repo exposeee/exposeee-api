@@ -6,7 +6,7 @@ from rest_framework import status
 from rest_framework.parsers import FileUploadParser
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from memba_match.entities import Entities
+from memba_match.entity_handler import EntityHandler
 from memba_match.utils import dict_to_excel
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework.permissions import IsAuthenticated
@@ -36,7 +36,7 @@ class ExposeUploadFileView(APIView):
 
         expose = Expose(file=file_obj)
         try:
-            entities = Entities(file_io=file_obj)
+            entities = EntityHandler(file_io=file_obj)
 
             expose.data['kpis'] = entities.payload
             expose.data['text'] = entities.handler.full_text()
