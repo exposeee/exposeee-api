@@ -123,7 +123,7 @@ def test_export_file(client, user, expose_user_list_kpis):
 def test_delete_exposes(client, user, expose_user_list_kpis):
     login_resp = login(client, user)
 
-    header={
+    header = {
         'HTTP_AUTHORIZATION': f'Bearer {login_resp.data["access_token"]}',
     }
 
