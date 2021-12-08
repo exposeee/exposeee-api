@@ -1,5 +1,6 @@
 from django.contrib.auth import get_user_model
 from allauth.account.models import EmailAddress
+from memba_match.constants.kpis import column_translations
 from core.models import Expose, ExposeUser
 import pytest
 
@@ -15,13 +16,11 @@ def expose_user_list(user):
     expose1 = Expose.objects.create(
         file="file1.pdf",
         status=Expose.DONE,
-        data={},
     )
 
     expose2 = Expose.objects.create(
         file="file2.pdf",
         status=Expose.DONE,
-        data={},
     )
 
     ExposeUser.objects.create(
@@ -39,51 +38,29 @@ def expose_user_list(user):
 
 @pytest.fixture
 def expose_user_list_kpis(user):
+    kpis = {key: None for key in column_translations.keys()}
     expose1 = Expose.objects.create(
+        id=1,
         file="file1.pdf",
         status=Expose.DONE,
         data={
-            'kpis': {
-                'kaufpreis': 2000000,
-                'area': 300000,
-                'yield': None,
-                'multiplier': None,
-                'wohneinheiten': None,
-                'gewerbeflaeche': None,
-                'price_m2': None,
-                'date': None,
-                'address': None,
-                'gewerbeeinheiten': None,
-                'baujahr': None,
-                'resource': None,
-                'wohnflaeche': None,
-                'jnkm': None,
-            }
+            'kpis': kpis
         },
     )
 
+    expose1.data['kpis']['kaufpreis'] = 2000000
+    expose1.data['kpis']['area'] = 300000
+    expose1.save()
+
     expose2 = Expose.objects.create(
+        id=2,
         file="file2.pdf",
         status=Expose.DONE,
-        data={
-            'kpis': {
-                'kaufpreis': 5000000,
-                'area': 700000,
-                'yield': None,
-                'multiplier': None,
-                'wohneinheiten': None,
-                'gewerbeflaeche': None,
-                'price_m2': None,
-                'date': None,
-                'address': None,
-                'gewerbeeinheiten': None,
-                'baujahr': None,
-                'resource': None,
-                'wohnflaeche': None,
-                'jnkm': None,
-            }
-        },
     )
+
+    expose2.data['kpis']['kaufpreis'] = 5000000
+    expose2.data['kpis']['area'] = 700000
+    expose2.save()
 
     ExposeUser.objects.create(
         user=user,

@@ -61,6 +61,7 @@ INSTALLED_APPS = [
     'django_s3_storage',
     'rest_framework_simplejwt.token_blacklist',
     'test_without_migrations',
+    'django_rq',
 ]
 
 SITE_ID = 1
@@ -249,3 +250,24 @@ sentry_sdk.init(
     traces_sample_rate=0.8,
     send_default_pii=True
 )
+
+CACHES = {
+    "default": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": "redis://127.0.0.1:6379/0",
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+        }
+    }
+}
+
+# Use the same redis as with caches for RQ
+RQ_QUEUES = {
+    'default': {
+        'USE_REDIS_CACHE': 'default',
+    },
+}
+
+SESSION_ENGINE = "django.contrib.sessions.backends.cache"
+SESSION_CACHE_ALIAS = "default"
+RQ_SHOW_ADMIN_LINK = True

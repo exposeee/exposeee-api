@@ -2,18 +2,37 @@ import traceback
 import tempfile
 import base64
 
-from rest_framework import status
+from rest_framework import status, permissions
 from rest_framework.parsers import FileUploadParser
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from memba_match.entity_handler import EntityHandler
+
 from memba_match.utils import dict_to_excel
+from memba_match.constants.kpis import column_translations
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework.permissions import IsAuthenticated
-
-from .utils import file_name
+from .jobs import process_expose_file
+from .utils import file_name, format_expose
 
 from .models import Expose, ExposeUser
+
+
+class ExposeColumns(APIView):
+    authentication_classes = ()
+    permission_classes = (permissions.AllowAny,)
+
+    def get(self, request):
+        return Response(
+            data=[
+                {
+                    'name': value,
+                    'selector': f'kpis.{name}',
+                    'sortable': True,
+                    'width': '150px',
+                }
+                for name, value in column_translations.items()
+            ],
+        )
 
 
 class ExposeListView(APIView):
@@ -35,24 +54,13 @@ class ExposeUploadFileView(APIView):
         file_obj = request.data['file']
 
         expose = Expose(file=file_obj)
-        try:
-            entities = EntityHandler(file_io=file_obj)
-
-            expose.data['kpis'] = entities.payload
-            expose.data['text'] = entities.handler.full_text()
-            expose.status = Expose.DONE
-            expose.data['logs'] = ''
-
-        except Exception:
-            expose.data['logs'] = traceback.format_exc()
-            expose.status = Expose.FAIL
-
+        expose.status = Expose.PENDING
         expose.save()
-
         ExposeUser.objects.create(expose=expose, user=request.user)
+        process_expose_file.delay(expose)
 
         return Response(
-            data={'id': expose.id, **expose.data},
+            data=format_expose(expose),
         )
 
 

@@ -68,7 +68,7 @@ def test_list_exposes(client, user, expose_user_list):
     }
 
     resp = client.get(reverse('v2_expose_list'), **header)
-    assert [{'id': 1}, {'id': 2}] == resp.data
+    assert len(resp.data) == 2
 
 
 @pytest.mark.django_db
