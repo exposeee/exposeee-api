@@ -1,3 +1,4 @@
+import os
 from django.db import models
 from django.contrib.auth.models import User
 
@@ -6,6 +7,8 @@ from django_s3_storage.storage import S3Storage
 storage = S3Storage(aws_s3_bucket_name='memba', )
 
 from exposeee_api.settings import DEBUG
+from core.utils import format_expose, default_data
+
 
 ENV_FOLDER = 'development' if DEBUG else 'production'
 
@@ -35,6 +38,14 @@ class Expose(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+    def filename(self):
+        return os.path.basename(self.file.name)
+
+    def save(self, *args, **kwargs):
+        if self.file and not self.data:
+            self.data = default_data(self.filename())
+        super(Expose, self).save(*args, **kwargs)
+
 
 class ExposeUser(models.Model):
     expose = models.ForeignKey(Expose, on_delete=models.PROTECT)
@@ -51,12 +62,7 @@ class ExposeUser(models.Model):
 
     @staticmethod
     def list_kpis_by_user(user):
-        exposes_user = ExposeUser.list_exposes_by_user(user)
-
         return [
-            {
-                'id': expose_user.expose.id,
-                **expose_user.expose.data,
-            }
-            for expose_user in exposes_user
+            format_expose(expose_user.expose)
+            for expose_user in ExposeUser.objects.filter(user=user)
         ]

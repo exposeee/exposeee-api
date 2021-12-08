@@ -13,9 +13,8 @@ def user():
 @pytest.fixture
 def expose():
     return Expose.objects.create(
-        file="file.pdf",
+        file='file.pdf',
         status=Expose.DONE,
-        data={},
     )
 
 @pytest.fixture
@@ -23,13 +22,11 @@ def expose_user_list(user):
     expose1 = Expose.objects.create(
         file="file1.pdf",
         status=Expose.DONE,
-        data={},
     )
 
     expose2 = Expose.objects.create(
         file="file2.pdf",
         status=Expose.DONE,
-        data={},
     )
 
     ExposeUser.objects.create(

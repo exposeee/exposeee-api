@@ -21,7 +21,7 @@ from core.views import (
 )
 from core.api import (
     ExposeUploadFileView, ExposeListView,
-    ExposeBrowserStorageView, ExportExposesView, DeleteExposesView,
+    ExposeBrowserStorageView, ExportExposesView, DeleteExposesView, ExposeColumns,
 )
 from rest_framework_simplejwt import views as jwt_views
 from rest_framework_simplejwt.views import (
@@ -34,12 +34,18 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('django.contrib.auth.urls')),
     path('accounts/', include('allauth.urls')),
+    path('django-rq/', include('django_rq.urls')),
     path('api/v1/expose/', ExposeUploadView.as_view(), name='v1-expose'),
     path('api/v1/export/', ExportView.as_view(), name='v1-expose-export'),
     path(
         'api/v1/blacklist/',
         LogoutAndBlacklistRefreshTokenForUserView.as_view(),
         name='blacklist'
+    ),
+    path(
+        r'api/v2/expose/columns/',
+        ExposeColumns.as_view(),
+        name='v2_expose_columns',
     ),
     path(
         r'api/v2/expose/upload_file/',

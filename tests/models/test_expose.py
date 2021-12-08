@@ -30,4 +30,4 @@ def test_expose_user_list(user, expose_user_list):
 @pytest.mark.django_db
 def test_kpis_list(user, expose_user_list):
     kpis = ExposeUser.list_kpis_by_user(user=user)
-    assert kpis == [{'id': 1}, {'id': 2}]
+    assert len(kpis) == 2
