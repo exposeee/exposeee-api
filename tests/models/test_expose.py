@@ -9,7 +9,7 @@ def test_expose_create():
         status=Expose.DONE,
         data='{}',
     )
-    assert Expose.objects.exists() == True
+    assert Expose.objects.exists() is True
 
 
 @pytest.mark.django_db
@@ -18,7 +18,7 @@ def test_expose_user_create(user, expose):
         user=user,
         expose=expose,
     )
-    assert ExposeUser.objects.exists() == True
+    assert ExposeUser.objects.exists() is True
 
 
 @pytest.mark.django_db

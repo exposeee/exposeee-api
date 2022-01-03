@@ -1,16 +1,22 @@
 import os
 from django.db import models
 from django.contrib.auth.models import User
-
+from core.jobs import process_expose_file
 from django_s3_storage.storage import S3Storage
-
-storage = S3Storage(aws_s3_bucket_name='memba', )
 
 from exposeee_api.settings import DEBUG
 from core.utils import format_expose, default_data
 
 
 ENV_FOLDER = 'development' if DEBUG else 'production'
+
+
+def get_upload_path(instance, filename):
+    return os.path.join(
+        f'exposes/{ENV_FOLDER}/',
+        f'user_{instance.user.id}',
+        filename
+    )
 
 
 class Expose(models.Model):
@@ -25,8 +31,8 @@ class Expose(models.Model):
         (PENDING, 'pending'),
     )
     file = models.FileField(
-        storage=storage,
-        upload_to=f'exposes/{ENV_FOLDER}/'
+        storage=S3Storage(aws_s3_bucket_name='memba',),
+        upload_to=get_upload_path,
     )
     status = models.CharField(
         'Status',
@@ -34,6 +40,7 @@ class Expose(models.Model):
         choices=STATUS,
         default=PENDING,
     )
+    user = models.ForeignKey(User, on_delete=models.PROTECT, null=True, blank=True)
     data = models.JSONField(default=dict)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -45,6 +52,9 @@ class Expose(models.Model):
         if self.file and not self.data:
             self.data = default_data(self.filename())
         super(Expose, self).save(*args, **kwargs)
+
+        if self.status == self.PENDING:
+            process_expose_file.delay(self)
 
 
 class ExposeUser(models.Model):

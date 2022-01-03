@@ -11,7 +11,6 @@ from memba_match.utils import dict_to_excel
 from memba_match.constants.kpis import column_translations
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework.permissions import IsAuthenticated
-from .jobs import process_expose_file
 from .utils import file_name, format_expose
 
 from .models import Expose, ExposeUser
@@ -53,11 +52,10 @@ class ExposeUploadFileView(APIView):
     def post(self, request):
         file_obj = request.data['file']
 
-        expose = Expose(file=file_obj)
+        expose = Expose(file=file_obj, user=request.user)
         expose.status = Expose.PENDING
         expose.save()
         ExposeUser.objects.create(expose=expose, user=request.user)
-        process_expose_file.delay(expose)
 
         return Response(
             data=format_expose(expose),

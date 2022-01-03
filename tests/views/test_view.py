@@ -4,6 +4,7 @@ import pytest
 from django.urls import reverse
 from core.models import Expose, ExposeUser
 
+
 def login(client, user):
     payload = {
         'username': user.username,
@@ -13,11 +14,12 @@ def login(client, user):
 
     return client.post('/memba-auth/login/', payload, status_code=200)
 
+
 @pytest.mark.django_db
 def xtest_upload_pdf(client, user):
     login_resp = login(client, user)
 
-    header={
+    header = {
         'HTTP_AUTHORIZATIO': f'Bearer {login_resp.access}',
         'HTTP_CONTENT_DISPOSITION': 'attachment; filename=test.pdf',
         'HTTP_CONTENT_TYPE': (
@@ -47,7 +49,6 @@ def xtest_upload_pdf(client, user):
         'logs': '',
         'text': 'kaufpreis: 6.000.000 €\n gesamtfläche: 2.006,08 m²',
     }
-
 
     with open('./tests/views/test.pdf.fixture', encoding="ISO-8859-1") as fp:
         payload_file = {'name': 'test.pdf', 'file': fp}
