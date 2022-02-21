@@ -28,7 +28,7 @@ def format_kpis(name, value):
 
     if name in ('jnkm', 'kaufpreis'):
         return format_price(value)
-    elif name in ('area', 'wohnflaeche', 'gewerbeflaeche', 'multiplier', 'yield'):
+    elif name in ('floor_area', 'leasable_area', 'wohnflaeche', 'gewerbeflaeche', 'multiplier', 'yield'):
         return format_number(value)
     elif name == 'price_m2':
         return f'{format_price(value)}/m²'

@@ -271,3 +271,5 @@ RQ_QUEUES = {
 SESSION_ENGINE = "django.contrib.sessions.backends.cache"
 SESSION_CACHE_ALIAS = "default"
 RQ_SHOW_ADMIN_LINK = True
+
+DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
