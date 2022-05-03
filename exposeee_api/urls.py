@@ -47,8 +47,8 @@ urlpatterns = [
         ExposeColumns.as_view(),
         name='v2_expose_columns',
     ),
-    path(
-        r'api/v2/expose/upload_file/',
+    re_path(
+        r'api/v2/expose/upload_file/(?P<filename>[^/]+)$',
         ExposeUploadFileView.as_view(),
         name='v2_expose_upload_file',
     ),

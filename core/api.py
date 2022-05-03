@@ -49,7 +49,7 @@ class ExposeUploadFileView(APIView):
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
 
-    def post(self, request):
+    def post(self, request, filename, format=None):
         file_obj = request.data['file']
 
         expose = Expose(file=file_obj, user=request.user)
