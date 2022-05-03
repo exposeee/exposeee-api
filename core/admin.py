@@ -11,6 +11,7 @@ class ExposeAdmin(admin.ModelAdmin):
         'status', 'file',
     )
 
+
 class ExposeUserAdmin(admin.ModelAdmin):
     list_display = ('expose', 'user', 'created_at', 'updated_at')
     date_hierarchy = 'created_at'
@@ -18,6 +19,7 @@ class ExposeUserAdmin(admin.ModelAdmin):
     search_fields = (
         'expose', 'user',
     )
+
 
 admin.site.register(Expose, ExposeAdmin)
 
