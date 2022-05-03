@@ -38,7 +38,7 @@ def format_kpis(name, value):
 
 def format_expose(expose):
     data = expose.data
-    kpis = data.pop('kpis')
+    kpis = data.pop('kpis') if 'kpis' in data else {}
 
     return {
         'id': expose.id,
