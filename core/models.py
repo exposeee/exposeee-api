@@ -6,6 +6,8 @@ from django_s3_storage.storage import S3Storage
 
 from exposeee_api.settings import DEBUG
 from core.utils import format_expose, default_data
+import channels.layers
+from asgiref.sync import async_to_sync
 
 
 ENV_FOLDER = 'development' if DEBUG else 'production'
@@ -55,6 +57,11 @@ class Expose(models.Model):
 
         if self.status == self.PENDING:
             process_expose_file.delay(self)
+
+        channel_layer = channels.layers.get_channel_layer()
+        async_to_sync(channel_layer.group_send)(
+            f'exposes_user_{self.user.id}', {'type': 'chat_message', 'payload': format_expose(self)}
+        )
 
 
 class ExposeUser(models.Model):

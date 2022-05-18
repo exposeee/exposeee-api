@@ -42,6 +42,7 @@ def format_expose(expose):
 
     return {
         'id': expose.id,
+        'status': expose.status,
         **expose.data,
         'kpis': {name: format_kpis(name, value) for name, value in kpis.items()},
     }

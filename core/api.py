@@ -27,9 +27,10 @@ class ExposeColumns(APIView):
                     'name': value,
                     'selector': f'kpis.{name}',
                     'sortable': True,
-                    'width': '150px',
+                    'width': '300px',
                 }
                 for name, value in column_translations.items()
+                if name in ('resource',)
             ],
         )
 
