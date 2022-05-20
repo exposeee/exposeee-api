@@ -30,7 +30,6 @@ class ExposeColumns(APIView):
                     'width': '300px',
                 }
                 for name, value in column_translations.items()
-                if name in ('resource',)
             ],
         )
 
