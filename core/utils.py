@@ -1,5 +1,5 @@
 import time
-from memba_match.constants.kpis import column_translations
+from memba_match.constants.kpis import COLUMN_TRANSLATIONS
 
 
 def file_name(token):
@@ -8,7 +8,7 @@ def file_name(token):
 
 def default_data(filename):
     return {
-        'kpis': {key: filename if key == 'resource' else None for key in column_translations.keys()},
+        'kpis': {key: filename if key == 'resource' else None for key in COLUMN_TRANSLATIONS.keys()},
         'text': '',
         'logs': '',
     }
