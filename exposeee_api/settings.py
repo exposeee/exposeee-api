@@ -62,6 +62,7 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt.token_blacklist',
     'test_without_migrations',
     'django_rq',
+    'channels',
 ]
 
 SITE_ID = 1
@@ -106,6 +107,17 @@ AUTHENTICATION_BACKENDS = [
 ]
 
 WSGI_APPLICATION = 'exposeee_api.wsgi.application'
+
+ASGI_APPLICATION = 'exposeee_api.asgi.application'
+
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            "hosts": [('127.0.0.1', 6379)],
+        },
+    },
+}
 
 
 # Database

@@ -1,11 +1,15 @@
 import os
 from django.db import models
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 from django.contrib.auth.models import User
 from core.jobs import process_expose_file
 from django_s3_storage.storage import S3Storage
 
 from exposeee_api.settings import DEBUG
 from core.utils import format_expose, default_data
+import channels.layers
+from asgiref.sync import async_to_sync
 
 
 ENV_FOLDER = 'development' if DEBUG else 'production'
@@ -76,3 +80,15 @@ class ExposeUser(models.Model):
             format_expose(expose_user.expose)
             for expose_user in ExposeUser.objects.filter(user=user)
         ]
+
+
+@receiver(post_save, sender=Expose, dispatch_uid='models.signal_handler_post_save_expose')
+def signal_handler_post_save_expose(sender, instance, **kwargs):
+    channel_group_send(instance)
+
+
+def channel_group_send(expose):
+    channel_layer = channels.layers.get_channel_layer()
+    async_to_sync(channel_layer.group_send)(
+        f'exposes_user_{expose.user.id}', {'type': 'chat_message', 'payload': format_expose(expose)}
+    )

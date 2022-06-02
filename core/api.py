@@ -8,7 +8,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 
 from memba_match.utils import dict_to_excel
-from memba_match.constants.kpis import column_translations
+from memba_match.constants.kpis import COLUMN_TRANSLATIONS
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework.permissions import IsAuthenticated
 from .utils import file_name, format_expose
@@ -27,9 +27,9 @@ class ExposeColumns(APIView):
                     'name': value,
                     'selector': f'kpis.{name}',
                     'sortable': True,
-                    'width': '150px',
+                    'width': '300px',
                 }
-                for name, value in column_translations.items()
+                for name, value in COLUMN_TRANSLATIONS.items()
             ],
         )
 
@@ -70,11 +70,15 @@ class ExposeBrowserStorageView(APIView):
         result = []
         for item in request.data.get('exposes'):
             try:
-                expose = Expose.objects.create(data={
-                 'text': '',
-                 'logs': '',
-                 'kpis': item,
-                }, status=Expose.DONE)
+                expose = Expose.objects.create(
+                    data={
+                        'text': '',
+                        'logs': '',
+                        'kpis': item,
+                    },
+                    status=Expose.DONE,
+                    user=request.user,
+                )
                 ExposeUser.objects.create(expose=expose, user=request.user)
                 item['uploaded'] = True
             except Exception:

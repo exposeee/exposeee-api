@@ -3,11 +3,12 @@ from core.models import Expose, ExposeUser
 
 
 @pytest.mark.django_db
-def test_expose_create():
+def test_expose_create(user):
     Expose.objects.create(
         file="file.pdf",
         status=Expose.DONE,
-        data='{}',
+        data={},
+        user=user,
     )
     assert Expose.objects.exists() is True
 
