@@ -217,7 +217,7 @@ CORS_ALLOW_HEADERS = list(default_headers) + [
 
 CORS_ALLOW_CREDENTIALS = True
 
-#Email
+#  Email
 EMAIL_BACKEND=config('EMAIL_BACKEND')
 EMAIL_HOST=config('EMAIL_HOST')
 EMAIL_PORT=config('EMAIL_PORT')
