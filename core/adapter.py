@@ -2,6 +2,7 @@ from django.conf import settings
 from allauth.account.adapter import DefaultAccountAdapter
 from exposeee_api.settings import CORS_ALLOWED_ORIGINS
 
+
 class CustomAccountAdapter(DefaultAccountAdapter):
 
     def send_confirmation_mail(self, request, emailconfirmation, signup):

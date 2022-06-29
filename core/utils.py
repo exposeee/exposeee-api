@@ -26,7 +26,7 @@ def format_kpis(name, value):
     if not value:
         return value
 
-    if name in ('jnkm', 'kaufpreis'):
+    if name in ('jnkm', 'jnkm_ist', 'jnkm_soll', 'purchase_price'):
         return format_price(value)
     elif name in ('floor_area', 'leasable_area', 'wohnflaeche', 'gewerbeflaeche', 'multiplier', 'yield'):
         return format_number(value)
