@@ -1,4 +1,5 @@
 import time
+import os
 from memba_match.constants.kpis import COLUMN_TRANSLATIONS
 
 
@@ -39,10 +40,13 @@ def format_kpis(name, value):
 def format_expose(expose):
     data = expose.data
     kpis = data.pop('kpis') if 'kpis' in data else {}
+    kpis = {name: format_kpis(name, value) for name, value in kpis.items()}
+    if 'resource' not in kpis:
+        kpis['resource'] = os.path.split(expose.file.name)[1]
 
     return {
         'id': expose.id,
         'status': expose.status,
         **expose.data,
-        'kpis': {name: format_kpis(name, value) for name, value in kpis.items()},
+        'kpis': kpis,
     }
