@@ -1,4 +1,5 @@
 import time
+import os
 from memba_match.constants.kpis import COLUMN_TRANSLATIONS
 
 
@@ -26,7 +27,7 @@ def format_kpis(name, value):
     if not value:
         return value
 
-    if name in ('jnkm', 'kaufpreis'):
+    if name in ('jnkm', 'jnkm_ist', 'jnkm_soll', 'purchase_price'):
         return format_price(value)
     elif name in ('floor_area', 'leasable_area', 'wohnflaeche', 'gewerbeflaeche', 'multiplier', 'yield'):
         return format_number(value)
@@ -39,10 +40,13 @@ def format_kpis(name, value):
 def format_expose(expose):
     data = expose.data
     kpis = data.pop('kpis') if 'kpis' in data else {}
+    kpis = {name: format_kpis(name, value) for name, value in kpis.items()}
+    if 'resource' not in kpis:
+        kpis['resource'] = os.path.split(expose.file.name)[1]
 
     return {
         'id': expose.id,
         'status': expose.status,
         **expose.data,
-        'kpis': {name: format_kpis(name, value) for name, value in kpis.items()},
+        'kpis': kpis,
     }
