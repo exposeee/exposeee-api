@@ -14,6 +14,7 @@ import sentry_sdk
 
 from datetime import timedelta
 from sentry_sdk.integrations.django import DjangoIntegration
+from sentry_sdk.integrations.redis import RedisIntegration
 from pathlib import Path
 from decouple import config
 from dj_database_url import parse as dburl
@@ -258,7 +259,10 @@ SENTRY_DSN = config('SENTRY_DSN')
 
 sentry_sdk.init(
     SENTRY_DSN,
-    integrations=[DjangoIntegration()],
+    integrations=[
+        DjangoIntegration(),
+        RedisIntegration(),
+    ],
     traces_sample_rate=0.8,
     send_default_pii=True
 )

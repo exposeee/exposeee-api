@@ -4,7 +4,7 @@ from core.models import Expose, ExposeUser
 
 
 class ExposeAdmin(admin.ModelAdmin):
-    list_display = ('status', 'file', 'created_at', 'updated_at')
+    list_display = ('id', 'status', 'file', 'created_at', 'updated_at')
     date_hierarchy = 'created_at'
     list_filter = ('status',)
     search_fields = (
