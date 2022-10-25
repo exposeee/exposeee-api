@@ -78,7 +78,7 @@ class ExposeUser(models.Model):
     def list_kpis_by_user(user):
         return [
             format_expose(expose_user.expose)
-            for expose_user in ExposeUser.objects.filter(user=user)
+            for expose_user in ExposeUser.objects.filter(user=user).order_by('-created_at')
         ]
 
 
@@ -88,6 +88,9 @@ def signal_handler_post_save_expose(sender, instance, **kwargs):
 
 
 def channel_group_send(expose):
+    if not expose.file:
+        return None
+
     channel_layer = channels.layers.get_channel_layer()
     async_to_sync(channel_layer.group_send)(
         f'exposes_user_{expose.user.id}', {'type': 'chat_message', 'payload': format_expose(expose)}
