@@ -137,6 +137,10 @@ class DeleteExposesView(APIView):
             exposes = Expose.objects.filter(
                 id__in=[expose_user.expose.id for expose_user in exposes_user],
             )
+
+            for expose in exposes:
+                expose.file.delete()
+
             exposes_user.delete()
             expose_deleted = exposes.delete()
 
