@@ -64,6 +64,7 @@ INSTALLED_APPS = [
     'test_without_migrations',
     'django_rq',
     'channels',
+    'django_json_widget',
 ]
 
 SITE_ID = 1

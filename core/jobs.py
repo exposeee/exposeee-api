@@ -11,15 +11,14 @@ def process_expose_file(expose):
 
     try:
         text_handler = TextHandler(file_io=expose.file)
-        text = text_handler.reader.full_text()
-        entities = EntityHandler(text=text)
+        entities = EntityHandler(text=text_handler.text)
 
         expose.data['kpis'] = {
             **entities.payload,
             'resource': text_handler.reader.filename,
             'creation_date': text_handler.reader.creation_date(),
         }
-        expose.data['text'] = text
+        expose.text = text_handler.text
         expose.status = expose.DONE
         expose.data['logs'] = ''
     except Exception:

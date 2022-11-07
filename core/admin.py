@@ -1,6 +1,8 @@
 # Register your models here.
 from django.contrib import admin
 from core.models import Expose, ExposeUser
+from django.db import models
+from django_json_widget.widgets import JSONEditorWidget
 
 
 class ExposeAdmin(admin.ModelAdmin):
@@ -10,6 +12,9 @@ class ExposeAdmin(admin.ModelAdmin):
     search_fields = (
         'status', 'file',
     )
+    formfield_overrides = {
+        models.JSONField: {'widget': JSONEditorWidget},
+    }
 
 
 class ExposeUserAdmin(admin.ModelAdmin):

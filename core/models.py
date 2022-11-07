@@ -45,6 +45,7 @@ class Expose(models.Model):
         default=PENDING,
     )
     user = models.ForeignKey(User, on_delete=models.PROTECT, null=True, blank=True)
+    text = models.TextField('Text', null=True, blank=True)
     data = models.JSONField(default=dict)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
