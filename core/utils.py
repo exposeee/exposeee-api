@@ -47,6 +47,6 @@ def format_expose(expose):
     return {
         'id': expose.id,
         'status': expose.status,
-        **expose.data,
+        'file_url': expose.file.url,
         'kpis': kpis,
     }

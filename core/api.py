@@ -22,15 +22,7 @@ class ExposeColumns(APIView):
 
     def get(self, request):
         return Response(
-            data=[
-                {
-                    'name': value,
-                    'selector': f'kpis.{name}',
-                    'sortable': True,
-                    'width': '300px',
-                }
-                for name, value in COLUMN_TRANSLATIONS.items()
-            ],
+            data=COLUMN_TRANSLATIONS,
         )
 
 
