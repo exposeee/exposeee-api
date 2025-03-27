@@ -6,23 +6,25 @@ from django_json_widget.widgets import JSONEditorWidget
 
 
 class ExposeAdmin(admin.ModelAdmin):
-    list_display = ('id', 'status', 'file', 'created_at', 'updated_at')
-    date_hierarchy = 'created_at'
-    list_filter = ('status', 'user')
+    list_display = ("id", "status", "file", "created_at", "updated_at")
+    date_hierarchy = "created_at"
+    list_filter = ("status",)
     search_fields = (
-        'status', 'file',
+        "status",
+        "file",
     )
     formfield_overrides = {
-        models.JSONField: {'widget': JSONEditorWidget},
+        models.JSONField: {"widget": JSONEditorWidget},
     }
 
 
 class ExposeUserAdmin(admin.ModelAdmin):
-    list_display = ('expose', 'user', 'created_at', 'updated_at')
-    date_hierarchy = 'created_at'
-    list_filter = ('expose',)
+    list_display = ("expose", "user", "created_at", "updated_at")
+    date_hierarchy = "created_at"
+    list_filter = ("expose",)
     search_fields = (
-        'expose', 'user',
+        "expose",
+        "user",
     )
 
 

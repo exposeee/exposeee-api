@@ -13,15 +13,21 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+
 from django.contrib import admin
 from django.urls import re_path, path, include
 from core.views import (
-    ExposeUploadView, ExportView,
+    ExposeUploadView,
+    ExportView,
     LogoutAndBlacklistRefreshTokenForUserView,
 )
 from core.api import (
-    ExposeUploadFileView, ExposeListView,
-    ExposeBrowserStorageView, ExportExposesView, DeleteExposesView, ExposeColumns,
+    ExposeUploadFileView,
+    ExposeListView,
+    ExposeBrowserStorageView,
+    ExportExposesView,
+    DeleteExposesView,
+    ExposeColumns,
 )
 from rest_framework_simplejwt import views as jwt_views
 from rest_framework_simplejwt.views import (
@@ -30,65 +36,62 @@ from rest_framework_simplejwt.views import (
 )
 from dj_rest_auth.registration.views import VerifyEmailView
 
+
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('', include('django.contrib.auth.urls')),
-    path('accounts/', include('allauth.urls')),
-    path('django-rq/', include('django_rq.urls')),
-    path('api/v1/expose/', ExposeUploadView.as_view(), name='v1-expose'),
-    path('api/v1/export/', ExportView.as_view(), name='v1-expose-export'),
+    path("admin/", admin.site.urls),
+    path("", include("django.contrib.auth.urls")),
+    path("accounts/", include("allauth.urls")),
+    path("django-rq/", include("django_rq.urls")),
+    path("api/v1/expose/", ExposeUploadView.as_view(), name="v1-expose"),
+    path("api/v1/export/", ExportView.as_view(), name="v1-expose-export"),
     path(
-        'api/v1/blacklist/',
+        "api/v1/blacklist/",
         LogoutAndBlacklistRefreshTokenForUserView.as_view(),
-        name='blacklist'
+        name="blacklist",
     ),
     path(
-        r'api/v2/expose/columns/',
+        r"api/v2/expose/columns/",
         ExposeColumns.as_view(),
-        name='v2_expose_columns',
+        name="v2_expose_columns",
     ),
     re_path(
-        r'api/v2/expose/upload_file/(?P<filename>[^/]+)$',
+        r"api/v2/expose/upload_file/(?P<filename>[^/]+)$",
         ExposeUploadFileView.as_view(),
-        name='v2_expose_upload_file',
+        name="v2_expose_upload_file",
     ),
     path(
-        r'api/v2/expose/list/',
+        r"api/v2/expose/list/",
         ExposeListView.as_view(),
-        name='v2_expose_list',
+        name="v2_expose_list",
     ),
     path(
-        r'api/v2/expose/save_from_browser_storage/',
+        r"api/v2/expose/save_from_browser_storage/",
         ExposeBrowserStorageView.as_view(),
-        name='v2_expose_save_browser_storage',
+        name="v2_expose_save_browser_storage",
     ),
     path(
-        r'api/v2/expose/export/',
+        r"api/v2/expose/export/",
         ExportExposesView.as_view(),
-        name='v2_expose_export',
+        name="v2_expose_export",
     ),
     path(
-        r'api/v2/expose/delete/',
+        r"api/v2/expose/delete/",
         DeleteExposesView.as_view(),
-        name='v2_expose_delete',
+        name="v2_expose_delete",
+    ),
+    path("api/v2/token/", TokenObtainPairView.as_view(), name="token_obtain_pair"),
+    path("api/v2/token/refresh/", TokenRefreshView.as_view(), name="token_refresh"),
+    path(
+        "api/token/", jwt_views.TokenObtainPairView.as_view(), name="token_obtain_pair"
     ),
     path(
-        'api/v2/token/',
-        TokenObtainPairView.as_view(),
-        name='token_obtain_pair'
+        "api/token/refresh/", jwt_views.TokenRefreshView.as_view(), name="token_refresh"
     ),
+    path("memba-auth/", include("dj_rest_auth.urls")),
+    path("memba-auth/registration/", include("dj_rest_auth.registration.urls")),
     path(
-        'api/v2/token/refresh/',
-        TokenRefreshView.as_view(),
-        name='token_refresh'
-    ),
-    path('api/token/', jwt_views.TokenObtainPairView.as_view(), name='token_obtain_pair'),
-    path('api/token/refresh/', jwt_views.TokenRefreshView.as_view(), name='token_refresh'),
-    path('memba-auth/', include('dj_rest_auth.urls')),
-    path('memba-auth/registration/', include('dj_rest_auth.registration.urls')),
-    path(
-        'memba-auth/account-confirm-email/',
+        "memba-auth/account-confirm-email/",
         VerifyEmailView.as_view(),
-        name='account_email_verification_sent'
+        name="account_email_verification_sent",
     ),
 ]

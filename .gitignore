@@ -10,6 +10,9 @@ __pycache__/
 # Setuptools distribution folder.
 /dist/
 
+# Virtual environment folder
+/venv/
+
 # Python egg metadata, regenerated from source files by setuptools.
 /*.egg-info
 
@@ -21,3 +24,5 @@ __pycache__/
 **/*.DS_Store
 
 .idea
+
+requirements.txt

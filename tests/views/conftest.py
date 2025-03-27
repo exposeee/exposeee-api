@@ -7,7 +7,7 @@ import pytest
 
 @pytest.fixture
 def user():
-    user = get_user_model().objects.create_user('user1', 'email@email.com', 'user123')
+    user = get_user_model().objects.create_user("user1", "email@email.com", "user123")
     EmailAddress.objects.create(user=user, email=user.email, verified=True)
     return user
 
@@ -26,15 +26,9 @@ def expose_user_list(user):
         user=user,
     )
 
-    ExposeUser.objects.create(
-        user=user,
-        expose=expose1
-    )
+    ExposeUser.objects.create(user=user, expose=expose1)
 
-    ExposeUser.objects.create(
-        user=user,
-        expose=expose2
-    )
+    ExposeUser.objects.create(user=user, expose=expose2)
 
     return ExposeUser.objects.all()
 
@@ -46,34 +40,28 @@ def expose_user_list_kpis(user):
         id=1,
         file="file1.pdf",
         status=Expose.DONE,
-        data={'kpis': kpis},
+        data={"kpis": kpis},
         user=user,
     )
 
-    expose1.data['kpis']['purchase_price'] = 2000000
-    expose1.data['kpis']['area'] = 300000
+    expose1.data["kpis"]["purchase_price"] = 2000000
+    expose1.data["kpis"]["area"] = 300000
     expose1.save()
 
     expose2 = Expose.objects.create(
         id=2,
         file="file2.pdf",
         status=Expose.DONE,
-        data={'kpis': kpis},
+        data={"kpis": kpis},
         user=user,
     )
 
-    expose2.data['kpis']['purchase_price'] = 5000000
-    expose2.data['kpis']['area'] = 700000
+    expose2.data["kpis"]["purchase_price"] = 5000000
+    expose2.data["kpis"]["area"] = 700000
     expose2.save()
 
-    ExposeUser.objects.create(
-        user=user,
-        expose=expose1
-    )
+    ExposeUser.objects.create(user=user, expose=expose1)
 
-    ExposeUser.objects.create(
-        user=user,
-        expose=expose2
-    )
+    ExposeUser.objects.create(user=user, expose=expose2)
 
     return ExposeUser.objects.all()
