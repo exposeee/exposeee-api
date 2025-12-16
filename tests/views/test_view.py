@@ -96,7 +96,7 @@ def test_save_browser_storage(client, user):
         **header,
     )
 
-    assert expected == resp.data
+    assert resp.data == expected
     assert 2 == len(Expose.objects.all())
     assert 2 == len(ExposeUser.objects.all())
 

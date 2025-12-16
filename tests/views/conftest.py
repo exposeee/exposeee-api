@@ -1,6 +1,6 @@
 from django.contrib.auth import get_user_model
-from allauth.account.models import EmailAddress
 from memba_match.constants.kpis import COLUMN_TRANSLATIONS
+from allauth.account.models import EmailAddress
 from core.models import Expose, ExposeUser
 import pytest
 

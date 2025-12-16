@@ -13,7 +13,7 @@ from memba_match.utils import dict_to_excel
 
 from rest_framework_simplejwt.exceptions import TokenError
 
-from .utils import file_name
+from core.utils import file_name
 
 
 class ExposeUploadView(APIView):
